@@ -2,13 +2,15 @@
 
 
 
-This is my LaTeX-made CV together with a rather small portfolio of my work. This repo contains all the code I used to build it. To compile it on your computer you may have to set the option `load-fonts` of citobiw.sty to `false` if don’t have Skolar Sans, Canape Serif, and Source Code Pro installed.
+This is my CV together with a rather small portfolio of my work. It was made with TeX using TikZ and the new LaTeX3 syntax.
 
+This repo contains all the code I used to build it. To compile it on your computer you may have to set the option `load-fonts` of citobiw.sty to `false` if don’t have _Skolar Sans_, _Canape Serif_, and _Source Code Pro_ installed.  
 Note that you must compile the document twice to get the right positions.
 
+The packages are documented directly in the *.sty files. If you have any questions send me an e-mail at <mail@tobiw.de> or use the issue tracker.
 
 
-## Files
+## Files and Folders
 
 - `citobiw.sty` – this package contains all necessary settings for my own corporate design
 - `cv_tobiw.tex` – this is the **main project file** to generate the document
