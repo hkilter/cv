@@ -1,0 +1,532 @@
+\RequirePackage{expl3,l3keys2e}
+\ProvidesExplPackage{cvtobiw}{2015/08/19}{1.0}{CV for Tobi W_}
+
+
+
+% MESSAGES
+
+\msg_new:nnn { cvtobiw } { dim-exists } {
+   The~length~'#1'~is~already~defined!
+}
+
+\msg_new:nnn { cvtobiw } { dim-undef } {
+   The~length~'#1'~was~never~defined!
+}
+
+\msg_new:nnn { cvtobiw } { timeline } {
+   '#1'~must~be~smaller~than~'#2'!
+}
+
+\msg_new:nnn { cvtobiw } { unknown-choice } {
+   The~value~'#2'~is~not~allowed~for~key~'#1'! \\
+   Allowed~values:~#3.
+}
+
+\msg_new:nnn { cvtobiw } { var-exists } {
+   The~variable~'#1'~is~already~defined!
+}
+
+\msg_new:nnn { cvtobiw } { var-required } {
+   The~variable~'#1'~must~be~set!
+}
+
+\msg_new:nnn { cvtobiw } { var-undef } {
+   The~variable~'#1'~was~never~defined!
+}
+
+
+
+% PACKGE OPTIONS
+% - language = <german|english>
+%   default: german
+% - show-frame = <true|false>
+%   show help lines/grid
+%   default: false
+% - year-format = <YY|'YY|YYYY>
+%   default: YY
+
+\seq_new:N \g_cvtobiw_languages_seq
+\seq_set_split:Nnn \g_cvtobiw_languages_seq { , }
+   { german, english }
+
+\keys_define:nn { cvtobiw } {
+
+   language .choices:xn =
+      { \seq_use:Nn \g_cvtobiw_languages_seq { , } }
+      { \tl_set_eq:NN \g_cvtobiw_lanugage_tl \l_keys_choice_tl },
+   language / unknown .code:n = {
+      \msg_error:nnxxx { cvtobiw } { unknown-choice } { language } { #1 }
+         { \seq_use:Nn \g_cvtobiw_languages_seq { ,~ } }
+   },
+   language .initial:n = { german },
+   
+   show-frame .bool_set:N = \g_cv_show_frame_bool,
+
+   year-format .choices:nn =
+      { YY, 'YY, YYYY }
+      { \tl_set_eq:NN \g_cvtobiw_year_format_tl \l_keys_choice_tl },
+   year-format / unknown .code:n = {
+      \msg_error:nnnnn { cvtobiw } { unknown-choice } { year-format } { #1 }
+         { YY,~'YY,~YYYY }
+   },
+   year-format .initial:n = { YY },
+
+}
+
+\ProcessKeysOptions { cvtobiw }
+
+
+
+% LOAD PACKAGES
+
+\RequirePackage{xparse}
+
+\RequirePackage{tikz}
+   \ExplSyntaxOff
+      \usetikzlibrary{backgrounds,calc,positioning}
+   \ExplSyntaxOn
+
+
+
+% MACROS FOR TEXT VARIABLES
+% \newvars[<prefix>]{<comma list of vars>}
+% \setvar{<var-name>}{<content/value>}
+% \usevar{<var-name>}
+% \begin{languagecontent}{<language>} … \end{languagecontent}
+% \citobiw_if_var_empty:n(TF) {<var-name>}
+% available vars:
+% - main
+% - image
+% - logo
+% - contact
+% - skills
+% - code
+
+\prg_new_conditional:Npnn \citobiw_if_var_empty:n #1 { p, T, F, TF } {
+   \tl_if_empty:cTF { cv_var_#1_ \tl_use:N \g_cvtobiw_lanugage_tl _tl } {
+      \prg_return_true:
+   } {
+      \prg_return_false:
+   }
+}
+
+
+\NewDocumentCommand { \newvars } { O{} m } {
+   \clist_map_inline:nn { #2 } {
+      \seq_map_inline:Nn \g_cvtobiw_languages_seq {
+         \tl_if_exist:cTF { cv_var_#1##1_####1_tl } {
+            \msg_error:nnn { cvtobiw } { var-exists } { #1##1 }
+         } {
+            \tl_new:c { cv_var_#1##1_####1_tl }
+         }
+      }
+   }
+}
+
+\NewDocumentCommand { \setvar } { m +m } {
+   \tl_if_empty:NTF \l_cvtobiw_current_lanugage_tl {
+      \seq_map_inline:Nn \g_cvtobiw_languages_seq {
+         \cvtobiw_set_var:nnn { #1 } { ##1 } { #2 }
+      }
+   } {
+      \cvtobiw_set_var:nnn { #1 } { \tl_use:N \l_cvtobiw_current_lanugage_tl } { #2 }
+   }
+}
+
+\cs_new:Npn \cvtobiw_set_var:nnn #1#2#3 {
+   \tl_if_exist:cTF { cv_var_#1_#2_tl } {
+      \tl_gset:cn { cv_var_#1_#2_tl } { #3 }
+   } {
+      \msg_error:nnn { cvtobiw } { var-undef } { #1 }
+   }
+}
+
+\NewDocumentCommand { \usevar } { m } {
+   \tl_if_exist:cTF { cv_var_#1_ \tl_use:N \g_cvtobiw_lanugage_tl _tl } {
+      \tl_use:c { cv_var_#1_ \tl_use:N \g_cvtobiw_lanugage_tl _tl }
+   } {
+      \msg_error:nnn { cvtobiw } { var-undef } { #1 }
+   }
+}
+
+\tl_new:N \l_cvtobiw_current_lanugage_tl
+
+\NewDocumentEnvironment { languagecontent } { m } {
+   \tl_set:Nn \l_cvtobiw_current_lanugage_tl { #1 }
+} {}
+
+\newvars { main, image, logo, contact, skills, code }
+
+
+
+% MACROS FOR LENGTHEN
+% \setnewdim{<dim-name>}{<value>}
+% \setdim{<dim-name>}{<value>}
+% \usedim{<dim-name>}
+
+\NewDocumentCommand { \setnewdim } { m m } {
+   \dim_if_exist:cTF { l_cv_dim_#1_dim } {
+      \msg_error:nnn { cvtobiw } { dim-exists } { #1 }
+   } {
+      \dim_new:c { l_cv_dim_#1_dim }
+      \dim_set:cn { l_cv_dim_#1_dim } { #2 }
+   }
+}
+
+\NewDocumentCommand { \setdim } { m m } {
+   \dim_if_exist:cTF { l_cv_dim_#1_dim } {
+      \dim_set:cn { l_cv_dim_#1_dim } { #2 }
+   } {
+      \msg_error:nnn { cvtobiw } { dim-undef } { #1 }
+   }
+}
+
+\DeclareExpandableDocumentCommand { \usedim } { m } {
+   \dim_if_exist:cTF { l_cv_dim_#1_dim } {
+      \dim_use:c { l_cv_dim_#1_dim }
+   } {
+      \msg_error:nnx { cvtobiw } { dim-undef } { #1 }
+   }
+}
+
+
+
+% LAYOUT VARIABLES
+% available dimensions:
+% - margin-left
+% - margin-right
+% - margin-top
+% - margin-bottom
+% - gutter
+%   between columns
+% - col-width
+
+\setnewdim { margin-left } { 12mm }
+\setnewdim { margin-right } { \usedim { margin-left } }
+\setnewdim { margin-top } { 16mm }
+\setnewdim { margin-bottom } { 12mm }
+\setnewdim { gutter } { 5mm }
+\setnewdim { col-width }
+   { (
+         \paperwidth
+         - \usedim { margin-left }
+         - \usedim { gutter }
+         - \usedim { margin-right }
+         - \usedim { gutter }
+     ) / 3
+   }
+
+% VARIABLES AND MACROS FOR TIMELINE
+% - \timelineentry{<year>}[<x pos.>]{<headline>}{<description>}
+%   <year> can be either a dingle year YYYY, a range YYYY-YYYY, where 'today'
+%   can replace a year
+% - \citobiw_format_year:n {<year>}
+% - \cvtobiw_make_timeline_entry_node:nnnn {<style>}{<width>}{<headline>}{<description>}
+%   for use on a path
+% available vars:
+% - timeline-start
+% - timeline-end
+% - timeline-birth
+% - timeline-entries
+% available dimensions:
+% - timeline-linewidth
+% - timeline-raster
+% - timeline-raster-start
+% - timeline-entrywidth
+
+\cs_new:Npn \cvtobiw_make_timeline_entry_node:nnnn #1#2#3#4 {
+   node [#1, text~width=#2] {
+      {\usekomafont{timeline-headline}#3\par}
+      #4\par
+   }
+}
+
+\NewDocumentCommand { \timelineentry } { m O{0} m +m O{10} } {
+   \seq_set_split:Nnn \l_tmpa_seq { - } { #1 }
+   \int_compare:nTF { \seq_count:N \l_tmpa_seq = 1 } {
+      \seq_get_left:NN \l_tmpa_seq \l_tmpa_tl
+      \draw [timelinespot]
+         ($
+            (timeline-\tl_use:N \l_tmpa_tl)
+            + (\usedim{timeline-raster-start} + #2*\usedim{timeline-raster},0.5*1mm)
+         $)
+         \cvtobiw_make_timeline_entry_node:nnnn
+            { timelineentryspot }
+            { #5*\usedim{timeline-raster} }
+            { #3 }
+            { #4 }
+         --
+         ($
+            (timeline-\tl_use:N \l_tmpa_tl)
+            + (\usedim{timeline-raster-start} + #2*\usedim{timeline-raster},-0.5*1mm)
+         $);
+   } {
+      \seq_get_left:NN \l_tmpa_seq \l_tmpa_tl
+      \seq_get_right:NN \l_tmpa_seq \l_tmpb_tl
+      \draw [timelinerange]
+         ($
+            (timeline-\tl_use:N \l_tmpa_tl)
+            + (\usedim{timeline-raster-start} + #2*\usedim{timeline-raster},0)
+         $)
+         \cvtobiw_make_timeline_entry_node:nnnn
+            { timelineentryrange }
+            { #5*\usedim{timeline-raster} }
+            { #3 }
+            { #4 }
+         --
+         ($
+            (timeline-\tl_use:N \l_tmpb_tl)
+            + (\usedim{timeline-raster-start} + #2*\usedim{timeline-raster},0)
+         $);
+   }
+}
+
+\tl_new:N \g_cvtobiw_year_format_yy_tl
+\tl_set:Nn \g_cvtobiw_year_format_yy_tl { YY }
+
+\tl_new:N \g_cvtobiw_year_format_ayy_tl
+\tl_set:Nn \g_cvtobiw_year_format_ayy_tl { 'YY }
+
+\tl_new:N \g_cvtobiw_year_format_yyyy_tl
+\tl_set:Nn \g_cvtobiw_year_format_yyyy_tl { YYYY }
+
+\cs_new:Npn \citobiw_format_year:n #1 {
+   \tl_case:Nn \g_cvtobiw_year_format_tl {
+      \g_cvtobiw_year_format_yy_tl { \citobiw_format_year_yy:n { #1 } }
+      \g_cvtobiw_year_format_ayy_tl { ’ \citobiw_format_year_yy:n { #1 } }
+      \g_cvtobiw_year_format_yyyy_tl { #1 }
+   }
+}
+\cs_new:Npn \citobiw_format_year_yy:n #1 {
+   \int_set:Nn \l_tmpa_int { \int_mod:nn { #1 } { 100 } }
+   \int_compare:nTF { \l_tmpa_int < 10 } {
+      0 \int_use:N \l_tmpa_int
+   } {
+      \int_use:N \l_tmpa_int
+   }
+}
+
+\newvars [ timeline- ] { birth, start, end, entries }
+
+\setnewdim { timeline-linewidth } { 1mm }
+
+\setnewdim { timeline-birthgap } { 35mm }
+
+\setnewdim { timeline-raster } { 5mm }
+
+\setnewdim { timeline-raster-start } { 5mm }
+
+\setnewdim { timeline-entrysep } { 1mm }
+
+\newkomafont{timeline-entry}{\footnotesize}
+\newkomafont{timeline-headline}{\usekomafont{timeline-entry}\bfseries}
+
+
+% TIKZ SETTINGS
+
+\tikzset{
+   every~node/.style = {
+      inner~sep = 0pt,
+      outer~sep = 0pt,
+   },
+   maintext/.style = {
+      anchor = north~west,
+      text~width = 2*\usedim{col-width} + \usedim{gutter},
+      align = justify,
+   },
+   image/.style = {
+      anchor = north~west,
+   },
+   logo/.style = {
+      anchor = north~west,
+   },
+   contact/.style = {
+      anchor = north~west,
+      text~width = \usedim{col-width},
+      align = left,
+   },
+   skills/.style = {
+      anchor = south~west,
+      text~width = \usedim{col-width},
+      align = left,
+   },
+   codehint/.style = {
+      below~right = 4mm~and~0mm,
+      font = \footnotesize\itshape,
+      text = midgray,
+   },
+   timeline/.style = {
+      line~width = \usedim{timeline-linewidth},
+   },
+   timelinetoday/.style = {
+      timeline,
+   },
+   birthline/.style = {
+      timeline,
+      dash~pattern = on~\usedim{timeline-linewidth}~off~\usedim{timeline-linewidth},
+   },
+   timelineyear/.style = {
+      fill = white,
+      font = \tiny,
+      minimum~width = \usedim{timeline-linewidth} + 0.4pt,
+      inner~sep = 0.3ex,
+   },
+   timelinespot/.style = {
+      timeline,
+      draw=spot,
+   },
+   timelinerange/.style = {
+      timelinespot,
+      shorten~<= -\pgflinewidth,
+      shorten~>= -\pgflinewidth,
+   },
+   timelineentry/.style = {
+      font = \usekomafont{timeline-entry},
+   },
+   timelineentryspot/.style = {
+      timelineentry,
+      below~right = \pgflinewidth/2~and~\pgflinewidth+\usedim{timeline-entrysep},
+      anchor=mid~west,
+   },
+   timelineentryrange/.style = {
+      timelineentry,
+      above~right = \pgflinewidth~and~\pgflinewidth+\usedim{timeline-entrysep},
+      anchor = north~west,
+   },
+}
+
+
+
+
+% MACRO TO PRINT THE CV
+% \MakeCV
+
+\NewDocumentCommand { \MakeCV } { } {%
+   \clearpage
+   \pagestyle { empty }
+   \begin{tikzpicture}[remember~picture, overlay]
+      % coordinates
+      %% page
+      \coordinate (TL) at ($(current~page.north~west)+(\usedim{margin-left},-\usedim{margin-top})$);
+      \coordinate (TR) at ($(current~page.north~east)+(-\usedim{margin-right},-\usedim{margin-top})$);
+      \coordinate (TM) at ($(TL)!0.5!(TR)$);
+      \coordinate (BL) at ($(current~page.south~west)+(\usedim{margin-left},\usedim{margin-bottom})$);
+      \coordinate (BR) at ($(current~page.south~east)+(-\usedim{margin-right},\usedim{margin-bottom})$);
+      \coordinate (BM) at ($(BL)!0.5!(BR)$);
+      %% columns
+      %%% column 1
+      \coordinate (col1-TL) at (TL);
+      \coordinate (col1-TR) at ($(col1-TL)+(\usedim{col-width},0)$);
+      \coordinate (col1-BL) at (BL);
+      \coordinate (col1-BR) at ($(col1-BL)+(\usedim{col-width},0)$);
+      %%% column 2
+      \coordinate (col2-TL) at ($(col1-TR)+(\usedim{gutter},0)$);
+      \coordinate (col2-TR) at ($(col2-TL)+(\usedim{col-width},0)$);
+      \coordinate (col2-BL) at ($(col1-BR)+(\usedim{gutter},0)$);
+      \coordinate (col2-BR) at ($(col2-BL)+(\usedim{col-width},0)$);
+      %%% column 3
+      \coordinate (col3-TL) at ($(col2-TR)+(\usedim{gutter},0)$);
+      \coordinate (col3-TR) at ($(col3-TL)+(\usedim{col-width},0)$);
+      \coordinate (col3-BL) at ($(col2-BR)+(\usedim{gutter},0)$);
+      \coordinate (col3-BR) at ($(col3-BL)+(\usedim{col-width},0)$);
+      % frame / help lines
+      \bool_if:NT \g_cv_show_frame_bool {
+         \begin{scope}[thin, magenta]
+            \draw (TL) rectangle (BR);
+            \draw (col1-TR) -- (col1-BR);
+            \draw (col2-TL) -- (col2-BL);
+            \draw (col2-TR) -- (col2-BR);
+            \draw (col3-TL) -- (col3-BL);
+            \draw (col3-TR) -- (col3-BR);
+         \end{scope}
+      }
+      % main text
+      \node (maintext) [maintext] at (col1-TL) { \usevar { main } };
+      % time line
+      \bool_if:nTF {
+         \citobiw_if_var_empty_p:n { timeline-start }
+         ||
+         \citobiw_if_var_empty_p:n { timeline-end }
+      } {
+         \msg_warning:nnn { cvtobiw } { var-required } { timeline-start }
+         \msg_warning:nnn { cvtobiw } { var-required } { timeline-end }
+      } {
+         \int_compare:nT { \usevar{timeline-start} > \usevar{timeline-end} } {
+            \msg_error:nnnn { cvtobiw } { timeline } { timeline-start } { timeline-end }
+         }
+         \citobiw_if_var_empty:nTF { timeline-birth } {
+            \coordinate (timeline-\usevar{timeline-start})
+               at ($(maintext.south~west)+(\usedim{timeline-linewidth}/2,-5mm)$);
+         } {
+            \int_compare:nT { \usevar{timeline-birth} > \usevar{timeline-start} } {
+               \msg_error:nnnn { cvtobiw } { timeline } { timeline-birth } { timeline-start }
+            }
+            \coordinate (timeline-\usevar{timeline-birth})
+               at ($(maintext.south~west)+(\usedim{timeline-linewidth}/2,-5mm)$);
+            \coordinate [below=\usedim{timeline-birthgap}~of~timeline-\usevar{timeline-birth}]
+               (timeline-\usevar{timeline-start});
+            \draw [birthline] (timeline-\usevar{timeline-birth}) -- (timeline-\usevar{timeline-start});
+            \node [timelineyear] at (timeline-\usevar{timeline-birth})
+               { \citobiw_format_year:n { \usevar{timeline-birth} } };
+         }
+         \coordinate (timeline-\usevar{timeline-end}) at ($(col1-BL)+(\usedim{timeline-linewidth}/2,0)$);
+         \coordinate (timeline-today) at
+            ($(current~page.south~west)!(timeline-\usevar{timeline-end})!(current~page.south~east)$);
+         \draw [timeline]
+            let \p1=(timeline-\usevar{timeline-start}), \p2=(timeline-\usevar{timeline-end}) in
+            \pgfextra { \dim_gset:Nn \l_tmpa_dim { \y1 - \y2 } }
+            (\p1) -- (\p2);
+         \dim_set:Nn \l_tmpb_dim { \l_tmpa_dim / ( \usevar{timeline-end} - \usevar{timeline-start} ) }
+         \foreach \Y [count=\n~from~0] in { \usevar{timeline-start}, ..., \usevar{timeline-end} } {
+            \coordinate (timeline-\Y)
+               at ($(timeline-\usevar{timeline-start})+(0,-\n*\dim_use:N \l_tmpb_dim)$);
+            \node [timelineyear] at (timeline-\Y) { \citobiw_format_year:n { \Y } };
+         }
+         \begin{scope}[on~background~layer]]
+            \draw [timelinetoday] (timeline-\usevar{timeline-end}) -- (timeline-today);
+         \end{scope}
+         \usevar{timeline-entries}
+      }
+      % image
+      \node (image) [image] at (col3-TL) { \usevar { image } };
+      % logo
+      \node (logo) [below = 5mm~of~image.south~west, logo] { \usevar { logo } };
+      % contact
+      \node [below = 5mm~of~logo.south~west, contact] { \usevar { contact } };
+      % skills
+      \node [skills] at (col3-BL) { \usevar { skills } };
+      % code hint
+      \node [codehint] at (col3-BL) { \usevar { code } };
+   \end{tikzpicture}
+   \clearpage
+}
+
+
+
+% HELPERS
+% \skill{<Label>}{<percent without %-sing>}
+
+\setnewdim{skill-width}{ 24mm }
+\setnewdim{skill-gap}{ 2mm }
+\setnewdim{skill-bar-width}{ \usedim{col-width} - \usedim{skill-width} - \usedim{skill-gap} }
+\setnewdim{skill-bar-height}{ 2pt }
+\setnewdim{skill-bar-shift}{ 0.32ex }
+
+\NewDocumentCommand { \skill } { m m } {
+   \makebox [ \usedim{skill-width} ]  [ l ] { #1 }
+   \hspace { \usedim{skill-gap} }
+   \dim_set:Nn \l_tmpa_dim { \usedim{skill-bar-width} * #2 / 100 }
+   \dim_set:Nn \l_tmpb_dim { \usedim{skill-bar-width} - \l_tmpa_dim }
+   \textcolor { spot } {
+      \rule [ \usedim{skill-bar-shift} ] { \dim_use:N \l_tmpa_dim } { \usedim{skill-bar-height} }
+   }
+   \textcolor { ultralightgray } {
+      \rule [ \usedim{skill-bar-shift} ] { \dim_use:N \l_tmpb_dim } { \usedim{skill-bar-height} }
+   }
+}
+
+
+
+% EOF
+
+\endinput

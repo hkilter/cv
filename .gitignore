@@ -7,6 +7,13 @@
 *.out
 *.toc
 
+## PDFs
+*.pdf
+
+
+## ZIPs
+*.zip
+
 ## Intermediate documents:
 *.dvi
 *-converted-to.*
