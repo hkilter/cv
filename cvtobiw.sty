@@ -86,6 +86,7 @@
       \usetikzlibrary{backgrounds,calc,positioning}
    \ExplSyntaxOn
 
+\RequirePackage { siunitx }
 
 
 % MACROS FOR TEXT VARIABLES
@@ -189,6 +190,16 @@
    }
 }
 
+\NewDocumentCommand { \showdim } { m } {
+   \dim_if_exist:cTF { l_cv_dim_#1_dim } {
+      \SI [ round-mode = places, round-precision = 1 ]
+         { \dim_to_decimal_in_unit:nn { \dim_use:c { l_cv_dim_#1_dim } } { 1mm } }
+         { \milli \meter }
+   } {
+      \msg_error:nnx { cvtobiw } { dim-undef } { #1 }
+   }
+}
+
 
 
 % LAYOUT VARIABLES
@@ -200,12 +211,13 @@
 % - gutter
 %   between columns
 % - col-width
+% - parskip
 
-\setnewdim { margin-left } { 12mm }
+\setnewdim { margin-left } { 15mm }
 \setnewdim { margin-right } { \usedim { margin-left } }
-\setnewdim { margin-top } { 16mm }
-\setnewdim { margin-bottom } { 12mm }
-\setnewdim { gutter } { 5mm }
+\setnewdim { margin-top } { 20mm }
+\setnewdim { margin-bottom } { 15mm }
+\setnewdim { gutter } { 15mm }
 \setnewdim { col-width }
    { (
          \paperwidth
@@ -215,6 +227,8 @@
          - \usedim { gutter }
      ) / 3
    }
+
+
 
 % VARIABLES AND MACROS FOR TIMELINE
 % - \timelineentry{<year>}[<x pos.>]{<headline>}{<description>}
@@ -318,8 +332,7 @@
 
 \setnewdim { timeline-entrysep } { 1mm }
 
-\newkomafont{timeline-entry}{\footnotesize}
-\newkomafont{timeline-headline}{\usekomafont{timeline-entry}\bfseries}
+\newkomafont{timeline-headline}{\bfseries}
 
 
 % TIKZ SETTINGS
@@ -329,10 +342,14 @@
       inner~sep = 0pt,
       outer~sep = 0pt,
    },
+   activate~parskip/.style = {
+      execute~at~begin~node = { \parskip = 0.5\baselineskip },
+   },
    maintext/.style = {
       anchor = north~west,
       text~width = 2*\usedim{col-width} + \usedim{gutter},
       align = justify,
+      activate~parskip,
    },
    image/.style = {
       anchor = north~west,
@@ -344,6 +361,7 @@
       anchor = north~west,
       text~width = \usedim{col-width},
       align = left,
+      activate~parskip,
    },
    skills/.style = {
       anchor = south~west,
@@ -351,7 +369,7 @@
       align = left,
    },
    codehint/.style = {
-      below~right = 4mm~and~0mm,
+      above~right = 4mm~and~0mm,
       font = \footnotesize\itshape,
       text = midgray,
    },
@@ -369,7 +387,7 @@
       fill = white,
       font = \tiny,
       minimum~width = \usedim{timeline-linewidth} + 0.4pt,
-      inner~sep = 0.3ex,
+      inner~ysep = 0.5ex,
    },
    timelinespot/.style = {
       timeline,
@@ -377,11 +395,10 @@
    },
    timelinerange/.style = {
       timelinespot,
-      shorten~<= -\pgflinewidth,
-      shorten~>= -\pgflinewidth,
+      shorten~<= -\pgflinewidth/2,
+      shorten~>= -\pgflinewidth/2,
    },
    timelineentry/.style = {
-      font = \usekomafont{timeline-entry},
    },
    timelineentryspot/.style = {
       timelineentry,
@@ -390,18 +407,24 @@
    },
    timelineentryrange/.style = {
       timelineentry,
-      above~right = \pgflinewidth~and~\pgflinewidth+\usedim{timeline-entrysep},
+      above~right = \pgflinewidth/2~and~\pgflinewidth+\usedim{timeline-entrysep},
       anchor = north~west,
    },
 }
 
 
 
+% CHANGE FONT SIZE
+\def\normalsize {
+   \@setfontsize \normalsize { 9 } { 12.5 }
+}
+
+
 
 % MACRO TO PRINT THE CV
 % \MakeCV
 
-\NewDocumentCommand { \MakeCV } { } {%
+\NewDocumentCommand { \MakeCV } { } {{
    \clearpage
    \pagestyle { empty }
    \begin{tikzpicture}[remember~picture, overlay]
@@ -431,13 +454,21 @@
       \coordinate (col3-BR) at ($(col3-BL)+(\usedim{col-width},0)$);
       % frame / help lines
       \bool_if:NT \g_cv_show_frame_bool {
-         \begin{scope}[thin, magenta]
+         \begin{scope}[
+            thin, magenta,
+            every~node/.style = {font=\tiny},
+         ]
             \draw (TL) rectangle (BR);
             \draw (col1-TR) -- (col1-BR);
             \draw (col2-TL) -- (col2-BL);
             \draw (col2-TR) -- (col2-BR);
             \draw (col3-TL) -- (col3-BL);
             \draw (col3-TR) -- (col3-BR);
+            \node at ($(col1-TL)!0.5!(col1-TR)$) [above] { \showdim{col-width} };
+            \node at ($(col1-TR)!0.5!(col2-TL)$) [above] { \showdim{gutter} };
+            \node at ($(col2-TL)!0.5!(col2-TR)$) [above] { \showdim{col-width} };
+            \node at ($(col2-TR)!0.5!(col3-TL)$) [above] { \showdim{gutter} };
+            \node at ($(col3-TL)!0.5!(col3-TR)$) [above] { \showdim{col-width} };
          \end{scope}
       }
       % main text
@@ -456,13 +487,13 @@
          }
          \citobiw_if_var_empty:nTF { timeline-birth } {
             \coordinate (timeline-\usevar{timeline-start})
-               at ($(maintext.south~west)+(\usedim{timeline-linewidth}/2,-5mm)$);
+               at ($(maintext.south~west)+(\usedim{timeline-linewidth}/2,-15mm)$);
          } {
             \int_compare:nT { \usevar{timeline-birth} > \usevar{timeline-start} } {
                \msg_error:nnnn { cvtobiw } { timeline } { timeline-birth } { timeline-start }
             }
             \coordinate (timeline-\usevar{timeline-birth})
-               at ($(maintext.south~west)+(\usedim{timeline-linewidth}/2,-5mm)$);
+               at ($(maintext.south~west)+(\usedim{timeline-linewidth}/2,-15mm)$);
             \coordinate [below=\usedim{timeline-birthgap}~of~timeline-\usevar{timeline-birth}]
                (timeline-\usevar{timeline-start});
             \draw [birthline] (timeline-\usevar{timeline-birth}) -- (timeline-\usevar{timeline-start});
@@ -496,10 +527,11 @@
       % skills
       \node [skills] at (col3-BL) { \usevar { skills } };
       % code hint
-      \node [codehint] at (col3-BL) { \usevar { code } };
+      \node [codehint] at ($(current~page.south~west)!(col3-BL)!(current~page.south~east)$)
+         { \usevar { code } };
    \end{tikzpicture}
    \clearpage
-}
+}}
 
 
 
