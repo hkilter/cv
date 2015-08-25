@@ -232,8 +232,10 @@
 
 % VARIABLES AND MACROS FOR TIMELINE
 % - \timelineentry{<year>}[<x pos.>]{<headline>}{<description>}
-%   <year> can be either a dingle year YYYY, a range YYYY-YYYY, where 'today'
-%   can replace a year
+%   <year> can be either a single year YYYY or a range YYYY-YYYY.
+%   YYYY can be replaced by 'today' to refer to the end of the time line;
+%   prepend 'mid' to a year to refer to the middle beteen the given year
+%   and the following one, e.g. 'mid2013'.
 % - \citobiw_format_year:n {<year>}
 % - \cvtobiw_make_timeline_entry_node:nnnn {<style>}{<width>}{<headline>}{<description>}
 %   for use on a path
@@ -536,6 +538,8 @@
             \coordinate (timeline-\Y)
                at ($(timeline-\usevar{timeline-start})+(0,-\n*\dim_use:N \l_tmpb_dim)$);
             \node [timelineyear] at (timeline-\Y) { \citobiw_format_year:n { \Y } };
+            \coordinate (timeline-mid\Y)
+               at ($(timeline-\usevar{timeline-start})+(0,{-(\n+0.5)*\dim_use:N \l_tmpb_dim})$);
          }
          \begin{scope}[on~background~layer]]
             \draw [timelinetoday] (timeline-\usevar{timeline-end}) -- (timeline-today);
