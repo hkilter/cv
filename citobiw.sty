@@ -91,7 +91,7 @@
 
 \RequirePackage { fontspec }
 
-\bool_if:NT \g_citobiw_load_fonts_bool {
+\bool_if:NTF \g_citobiw_load_fonts_bool {
    \setmainfont [%
       BoldFont = { SkolarSansLatn-Bd },
       BoldItalicFont = { SkolarSansLatn-BdIt },
@@ -99,10 +99,13 @@
    \let\sffamily\rmfamily
    
    \newfontfamily { \cpfamily } { Canape~Serif }
-   \DeclareTextFontCommand { \textcp } { \cpfamily }
    
    \setmonofont { Source~Code~Pro }
+} {
+   \let\cpfamily\rmfamily
 }
+
+\DeclareTextFontCommand { \textcp } { \cpfamily }
 
 \AtBeginDocument { \sffamily }
 
