@@ -10,6 +10,7 @@
 \providecommand{\SelectedColorSchemeNumber}{5}% = random
 
 \RequirePackage{polyglossia}
+   \setmainlanguage{\SelectedLanguage}
 
 \usepackage{microtype}
 
@@ -21,7 +22,7 @@
 ]{citobiw}
 
 \usepackage[
-   language = \selectedlanguage,
+   language = \SelectedLanguage,
 %   show-frame,
    year-format = YY,
 ]{cvtobiw}
