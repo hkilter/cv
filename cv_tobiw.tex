@@ -1,9 +1,13 @@
 % !TeX program = xelatex
 \documentclass{scrartcl}
 
-% this commad is defined in the makefile to generate the different
+% This commad is defined in the makefile to generate the different
 % language versions. If one compiles it directly this fallback is active.
-\providecommand{\selectedlanguage}{german}
+\providecommand{\SelectedLanguage}{german}
+
+% This commad is defined in the makefile to select a random color scheme.
+% If one compiles it directly this fallback is active.
+\providecommand{\SelectedColorSchemeNumber}{5}% = random
 
 \RequirePackage{polyglossia}
    \setmainlanguage{\selectedlanguage}
@@ -12,7 +16,8 @@
 
 \usepackage[
    color-mode = rgb,
-   color-scheme = random,
+%   color-scheme = random,
+   color-scheme-number = \SelectedColorSchemeNumber,
 %   load-fonts = false,
 ]{citobiw}
 

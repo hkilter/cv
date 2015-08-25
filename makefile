@@ -23,6 +23,8 @@ OUTPUTBASE = cv_tobiw_
 PDF = $(LANGUAGES:%=${OUTPUTBASE}%.pdf)
 ## ZIP file name
 ZIP = cv_tobiw.zip
+## compile command
+COMPILE = xelatex --jobname=${OUTPUTBASE}$* "\newcommand{\SelectedColorSchemeNumber}{$(shell bash -c 'echo $$(( $$RANDOM % 4 + 1 ))')}\newcommand{\SelectedLanguage}{$*}\input{${INPUT}}"
 
 
 # make ZIP
@@ -46,5 +48,5 @@ ${ZIP}: $(PDF) ${README.md} ${MAKEFILE}
 	
 # make PDFs
 ${OUTPUTBASE}%.pdf: ${INPUT} $(PACKAGES) ${IMAGES}
-	xelatex --jobname=${OUTPUTBASE}$* "\newcommand{\selectedlanguage}{$*}\input{${INPUT}}"
-	xelatex --jobname=${OUTPUTBASE}$* "\newcommand{\selectedlanguage}{$*}\input{${INPUT}}"
+	${COMPILE}
+	${COMPILE}

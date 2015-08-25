@@ -28,6 +28,8 @@
 % - color-scheme = <yellow|red|blue|green|random>
 %   select color scheme
 %   default: random
+% - color-scheme-number = <1–5>
+%   select color scheme by number, 5 = random
 % - load-fonts = <true|false>
 %   prevent loading of fonts if not available on your system
 %   default: true
@@ -55,6 +57,8 @@
          { yellow,~red,~blue,~green,~random }
    },
    color-scheme .initial:n = { random },
+   
+   color-scheme-number .int_set:N = \g_citobiw_color_scheme_number_int,
    
    load-fonts .bool_set:N = \g_citobiw_load_fonts_bool,
    load-fonts .initial:n = { true },
@@ -207,10 +211,14 @@
    white, FFFFFF / 0.00, 0.00, 0.00, 0.00
 }
 
-\int_compare:nT { \g_citobiw_color_scheme_number_int >= 5 } {
+\bool_if:nT {
+   \int_compare_p:n { \g_citobiw_color_scheme_number_int <= 0 }
+   ||
+   \int_compare_p:n { \g_citobiw_color_scheme_number_int >= 5 }
+} {
    \input { random }
-   \newcount\colorScheme
-   \setrannum{ \colorScheme }{ 1 }{ 4 }
+   \newcount \colorScheme
+   \setrannum { \colorScheme } { 1 } { 4 }
    \int_set:Nn \g_citobiw_color_scheme_number_int { \the\colorScheme }
 }
 
