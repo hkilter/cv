@@ -89,6 +89,7 @@
 \RequirePackage { siunitx }
 
 
+
 % MACROS FOR TEXT VARIABLES
 % \newvars[<prefix>]{<comma list of vars>}
 % \setvar{<var-name>}{<content/value>}
@@ -110,7 +111,6 @@
       \prg_return_false:
    }
 }
-
 
 \NewDocumentCommand { \newvars } { O{} m } {
    \clist_map_inline:nn { #2 } {
@@ -338,7 +338,8 @@
 
 \setnewdim { timeline-entrysep } { 1mm }
 
-\newkomafont{timeline-headline}{\bfseries}
+\newkomafont { timeline-headline } { \bfseries }
+
 
 
 % TIKZ SETTINGS
@@ -380,6 +381,7 @@
    },
    timeline/.style = {
       line~width = \usedim{timeline-linewidth},
+      draw = spot,
    },
    timelinetoday/.style = {
       timeline,
@@ -396,7 +398,7 @@
    },
    timelinespot/.style = {
       timeline,
-      draw=spot,
+      draw=ultralightgray,
    },
    timelinerange/.style = {
       timelinespot,
@@ -560,7 +562,7 @@
 % HELPERS
 % \skill{<Label>}{<percent without %-sing>}
 
-\setnewdim{skill-width}{ 24mm }
+\setnewdim{skill-width}{ 20mm }
 \setnewdim{skill-gap}{ 2mm }
 \setnewdim{skill-bar-width}{ \usedim{right-col-width} - \usedim{skill-width} - \usedim{skill-gap} }
 \setnewdim{skill-bar-height}{ 2pt }
