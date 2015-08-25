@@ -164,6 +164,7 @@
 % \setnewdim{<dim-name>}{<value>}
 % \setdim{<dim-name>}{<value>}
 % \usedim{<dim-name>}
+% \showdim{<dim-name>} (show in mm rounded to one place)
 
 \NewDocumentCommand { \setnewdim } { m m } {
    \dim_if_exist:cTF { l_cv_dim_#1_dim } {
@@ -209,24 +210,23 @@
 % - margin-top
 % - margin-bottom
 % - gutter
-%   between columns
-% - col-width
-% - parskip
+%   (between columns)
+% - left-col-width
+% - right-col-width
 
-\setnewdim { margin-left } { 15mm }
+\setnewdim { margin-left } { 18mm }
 \setnewdim { margin-right } { \usedim { margin-left } }
-\setnewdim { margin-top } { 20mm }
-\setnewdim { margin-bottom } { 15mm }
-\setnewdim { gutter } { 15mm }
-\setnewdim { col-width }
-   { (
-         \paperwidth
-         - \usedim { margin-left }
-         - \usedim { gutter }
-         - \usedim { margin-right }
-         - \usedim { gutter }
-     ) / 3
-   }
+\setnewdim { margin-top } { 24mm }
+\setnewdim { margin-bottom } { 18mm }
+\setnewdim { gutter } { 12mm }
+\setnewdim { right-col-width } { 42mm }
+\setnewdim { left-col-width } {
+   \paperwidth
+   - \usedim { margin-left }
+   - \usedim { gutter }
+   - \usedim { right-col-width }
+   - \usedim { margin-right }
+}
 
 
 
@@ -255,7 +255,7 @@
    }
 }
 
-\NewDocumentCommand { \timelineentry } { m O{0} m +m O{10} } {
+\NewDocumentCommand { \timelineentry } { m O{0} m +m O{12} } {
    \seq_set_split:Nnn \l_tmpa_seq { - } { #1 }
    \int_compare:nTF { \seq_count:N \l_tmpa_seq = 1 } {
       \seq_get_left:NN \l_tmpa_seq \l_tmpa_tl
@@ -266,7 +266,7 @@
          $)
          \cvtobiw_make_timeline_entry_node:nnnn
             { timelineentryspot }
-            { #5*\usedim{timeline-raster} }
+            { (#5+0.5)*\usedim{timeline-raster} }
             { #3 }
             { #4 }
          --
@@ -284,7 +284,7 @@
          $)
          \cvtobiw_make_timeline_entry_node:nnnn
             { timelineentryrange }
-            { #5*\usedim{timeline-raster} }
+            { (#5+0.5)*\usedim{timeline-raster} }
             { #3 }
             { #4 }
          --
@@ -320,15 +320,21 @@
    }
 }
 
-\newvars [ timeline- ] { birth, start, end, entries }
+\newvars [ timeline- ] { birth, start, end, entries, raster-div }
+
+\setvar { timeline-raster-div } { 30 }
 
 \setnewdim { timeline-linewidth } { 1mm }
 
 \setnewdim { timeline-birthgap } { 35mm }
 
-\setnewdim { timeline-raster } { 5mm }
+\setnewdim { timeline-raster-start } { 
+   \usedim{left-col-width} / \usevar{timeline-raster-div}
+}
 
-\setnewdim { timeline-raster-start } { 5mm }
+\setnewdim { timeline-raster } { 
+   \usedim{left-col-width} / \usevar{timeline-raster-div}
+}
 
 \setnewdim { timeline-entrysep } { 1mm }
 
@@ -347,7 +353,7 @@
    },
    maintext/.style = {
       anchor = north~west,
-      text~width = 2*\usedim{col-width} + \usedim{gutter},
+      text~width = \usedim{left-col-width},
       align = justify,
       activate~parskip,
    },
@@ -359,19 +365,18 @@
    },
    contact/.style = {
       anchor = north~west,
-      text~width = \usedim{col-width},
+      text~width = \usedim{right-col-width},
       align = left,
       activate~parskip,
    },
    skills/.style = {
       anchor = south~west,
-      text~width = \usedim{col-width},
+      text~width = \usedim{right-col-width},
       align = left,
    },
    codehint/.style = {
       above~right = 4mm~and~0mm,
-      font = \footnotesize\itshape,
-      text = midgray,
+      font = \tiny\itshape,
    },
    timeline/.style = {
       line~width = \usedim{timeline-linewidth},
@@ -402,12 +407,12 @@
    },
    timelineentryspot/.style = {
       timelineentry,
-      below~right = \pgflinewidth/2~and~\pgflinewidth+\usedim{timeline-entrysep},
+      below~right = \pgflinewidth/2~and~\pgflinewidth/2+\usedim{timeline-entrysep},
       anchor=mid~west,
    },
    timelineentryrange/.style = {
       timelineentry,
-      above~right = \pgflinewidth/2~and~\pgflinewidth+\usedim{timeline-entrysep},
+      above~right = \pgflinewidth/2~and~\pgflinewidth/2+\usedim{timeline-entrysep},
       anchor = north~west,
    },
 }
@@ -437,21 +442,16 @@
       \coordinate (BR) at ($(current~page.south~east)+(-\usedim{margin-right},\usedim{margin-bottom})$);
       \coordinate (BM) at ($(BL)!0.5!(BR)$);
       %% columns
-      %%% column 1
-      \coordinate (col1-TL) at (TL);
-      \coordinate (col1-TR) at ($(col1-TL)+(\usedim{col-width},0)$);
-      \coordinate (col1-BL) at (BL);
-      \coordinate (col1-BR) at ($(col1-BL)+(\usedim{col-width},0)$);
-      %%% column 2
-      \coordinate (col2-TL) at ($(col1-TR)+(\usedim{gutter},0)$);
-      \coordinate (col2-TR) at ($(col2-TL)+(\usedim{col-width},0)$);
-      \coordinate (col2-BL) at ($(col1-BR)+(\usedim{gutter},0)$);
-      \coordinate (col2-BR) at ($(col2-BL)+(\usedim{col-width},0)$);
-      %%% column 3
-      \coordinate (col3-TL) at ($(col2-TR)+(\usedim{gutter},0)$);
-      \coordinate (col3-TR) at ($(col3-TL)+(\usedim{col-width},0)$);
-      \coordinate (col3-BL) at ($(col2-BR)+(\usedim{gutter},0)$);
-      \coordinate (col3-BR) at ($(col3-BL)+(\usedim{col-width},0)$);
+      %%% left column
+      \coordinate (left-col-TL) at (TL);
+      \coordinate (left-col-TR) at ($(left-col-TL)+(\usedim{left-col-width},0)$);
+      \coordinate (left-col-BL) at (BL);
+      \coordinate (left-col-BR) at ($(left-col-BL)+(\usedim{left-col-width},0)$);
+      %%% right column
+      \coordinate (right-col-TL) at ($(left-col-TR)+(\usedim{gutter},0)$);
+      \coordinate (right-col-TR) at ($(right-col-TL)+(\usedim{right-col-width},0)$);
+      \coordinate (right-col-BL) at ($(left-col-BR)+(\usedim{gutter},0)$);
+      \coordinate (right-col-BR) at ($(right-col-BL)+(\usedim{right-col-width},0)$);
       % frame / help lines
       \bool_if:NT \g_cv_show_frame_bool {
          \begin{scope}[
@@ -459,20 +459,42 @@
             every~node/.style = {font=\tiny},
          ]
             \draw (TL) rectangle (BR);
-            \draw (col1-TR) -- (col1-BR);
-            \draw (col2-TL) -- (col2-BL);
-            \draw (col2-TR) -- (col2-BR);
-            \draw (col3-TL) -- (col3-BL);
-            \draw (col3-TR) -- (col3-BR);
-            \node at ($(col1-TL)!0.5!(col1-TR)$) [above] { \showdim{col-width} };
-            \node at ($(col1-TR)!0.5!(col2-TL)$) [above] { \showdim{gutter} };
-            \node at ($(col2-TL)!0.5!(col2-TR)$) [above] { \showdim{col-width} };
-            \node at ($(col2-TR)!0.5!(col3-TL)$) [above] { \showdim{gutter} };
-            \node at ($(col3-TL)!0.5!(col3-TR)$) [above] { \showdim{col-width} };
+            \draw (left-col-TR) -- (left-col-BR);
+            \draw (right-col-TL) -- (right-col-BL);
+            \draw (right-col-TR) -- (right-col-BR);
+            \node at ($(left-col-TL)!0.5!(left-col-TR)$) [above] { \showdim{left-col-width} };
+            \node at ($(left-col-TR)!0.5!(right-col-TL)$) [above] { \showdim{gutter} };
+            \node at ($(right-col-TL)!0.5!(right-col-TR)$) [above] { \showdim{right-col-width} };
+            \foreach \x in { 1, ..., \usevar{timeline-raster-div} }
+            { 
+               \draw [loosely~dashed]
+                  ($
+                     (left-col-TL)
+                     +(\usedim{timeline-raster-start},0)
+                     +(\x*\usedim{timeline-raster}-\usedim{timeline-raster},0)
+                  $)
+                  coordinate (tmp)
+                  --
+                  ($(left-col-BL)!(tmp)!(left-col-BR)$)
+                  ;
+            }
+            \node at ($(left-col-BL)+(\usedim{timeline-raster-start},0)$) [below~right, align=left] {
+               raster-start:~\showdim{timeline-raster-start}\\
+               raster-width:~\showdim{timeline-raster}\\
+               raster-div:~\usevar{timeline-raster-div}\\
+            };
+            \draw ($(current~page.north~west)!(TL)!(current~page.north~east)$)
+               |- ($(current~page.north~west)!(TL)!(current~page.south~west)$)
+               node [pos=0.25, below, sloped] {\showdim{margin-top}}
+               node [pos=0.75, above] {\showdim{margin-left}};
+            \draw ($(current~page.south~west)!(BR)!(current~page.south~east)$)
+               |- ($(current~page.north~east)!(BR)!(current~page.south~east)$)
+               node [pos=0.25, below, sloped] {\showdim{margin-bottom}}
+               node [pos=0.75, below] {\showdim{margin-right}};
          \end{scope}
       }
       % main text
-      \node (maintext) [maintext] at (col1-TL) { \usevar { main } };
+      \node (maintext) [maintext] at (left-col-TL) { \usevar { main } };
       % time line
       \bool_if:nTF {
          \citobiw_if_var_empty_p:n { timeline-start }
@@ -500,7 +522,7 @@
             \node [timelineyear] at (timeline-\usevar{timeline-birth})
                { \citobiw_format_year:n { \usevar{timeline-birth} } };
          }
-         \coordinate (timeline-\usevar{timeline-end}) at ($(col1-BL)+(\usedim{timeline-linewidth}/2,0)$);
+         \coordinate (timeline-\usevar{timeline-end}) at ($(left-col-BL)+(\usedim{timeline-linewidth}/2,0)$);
          \coordinate (timeline-today) at
             ($(current~page.south~west)!(timeline-\usevar{timeline-end})!(current~page.south~east)$);
          \draw [timeline]
@@ -519,15 +541,15 @@
          \usevar{timeline-entries}
       }
       % image
-      \node (image) [image] at (col3-TL) { \usevar { image } };
+      \node (image) [image] at (right-col-TL) { \usevar { image } };
       % logo
       \node (logo) [below = 5mm~of~image.south~west, logo] { \usevar { logo } };
       % contact
       \node [below = 5mm~of~logo.south~west, contact] { \usevar { contact } };
       % skills
-      \node [skills] at (col3-BL) { \usevar { skills } };
+      \node [skills] at (right-col-BL) { \usevar { skills } };
       % code hint
-      \node [codehint] at ($(current~page.south~west)!(col3-BL)!(current~page.south~east)$)
+      \node [codehint] at ($(current~page.south~west)!(right-col-BL)!(current~page.south~east)$)
          { \usevar { code } };
    \end{tikzpicture}
    \clearpage
@@ -540,7 +562,7 @@
 
 \setnewdim{skill-width}{ 24mm }
 \setnewdim{skill-gap}{ 2mm }
-\setnewdim{skill-bar-width}{ \usedim{col-width} - \usedim{skill-width} - \usedim{skill-gap} }
+\setnewdim{skill-bar-width}{ \usedim{right-col-width} - \usedim{skill-width} - \usedim{skill-gap} }
 \setnewdim{skill-bar-height}{ 2pt }
 \setnewdim{skill-bar-shift}{ 0.32ex }
 
