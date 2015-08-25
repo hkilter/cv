@@ -41,11 +41,11 @@
 \keys_define:nn { citobiw / package } {
 
    color-mode .choices:nn =
-      { rgb, cmyk }
+      { rgb, cmyk, gray }
       { \tl_set_eq:NN \g_citobiw_color_model_tl \l_keys_choice_tl },
    color-mode / unknown .code:n = {
       \msg_error:nnnnn { citobiw } { unknown-choice } { color-mode } { #1 }
-         { rgb,~cmyk }
+         { rgb,~cmyk,~gray }
    },
    color-mode .initial:n = { rgb },
    
@@ -180,35 +180,35 @@
 % - lightgray-<yellow|red|blue|green>
 % - ultralightgray-<yellow|red|blue|green>
 
-\definecolorset { HTML / cmyk } { } { } {
-   spot-yellow, FFC400 / 0.00, 0.20, 1.00, 0.00;
-   spot-red,    FF0000 / 0.00, 1.00, 1.00, 0.00;
-   spot-blue,   009FDF / 1.00, 0.10, 0.00, 0.00;
-   spot-green,  00A82D / 1.00, 0.10, 0.00, 0.00;
+\definecolorset { HTML / cmyk / gray } { } { } {
+   spot-yellow, FFC400 / 0.00, 0.20, 1.00, 0.00 / 0.00 ;
+   spot-red,    FF0000 / 0.00, 1.00, 1.00, 0.00 / 0.00 ;
+   spot-blue,   009FDF / 1.00, 0.10, 0.00, 0.00 / 0.00 ;
+   spot-green,  00A82D / 1.00, 0.10, 0.00, 0.00 / 0.00 ;
    
-   black, 000000 / 0.00, 0.00, 0.00, 1.00;
+   black, 000000 / 0.00, 0.00, 0.00, 1.00 / 0.00 ;
    
-   darkgray-yellow, 302F2C / 0.00, 0.00, 0.00, 0.87;
-   darkgray-red,    2F2D2D / 0.00, 0.00, 0.00, 0.87;
-   darkgray-blue,   292C2D / 0.00, 0.00, 0.00, 0.87;
-   darkgray-green,  2D2F2D / 0.00, 0.00, 0.00, 0.87;
+   darkgray-yellow, 302F2C / 0.00, 0.00, 0.00, 0.87 / 0.13 ;
+   darkgray-red,    2F2D2D / 0.00, 0.00, 0.00, 0.87 / 0.13 ;
+   darkgray-blue,   292C2D / 0.00, 0.00, 0.00, 0.87 / 0.13 ;
+   darkgray-green,  2D2F2D / 0.00, 0.00, 0.00, 0.87 / 0.13 ;
    
-   midgray-yellow, 716F6A / 0.00, 0.00, 0.00, 0.70;
-   midgray-red,    716F6F / 0.00, 0.00, 0.00, 0.70;
-   midgray-blue,   6B6E6F / 0.00, 0.00, 0.00, 0.70;
-   midgray-green,  6C6F6D / 0.00, 0.00, 0.00, 0.70;
+   midgray-yellow, 716F6A / 0.00, 0.00, 0.00, 0.70 / 0.30 ;
+   midgray-red,    716F6F / 0.00, 0.00, 0.00, 0.70 / 0.30 ;
+   midgray-blue,   6B6E6F / 0.00, 0.00, 0.00, 0.70 / 0.30 ;
+   midgray-green,  6C6F6D / 0.00, 0.00, 0.00, 0.70 / 0.30 ;
    
-   lightgray-yellow, ABAAA6 / 0.00, 0.00, 0.00, 0.40;
-   lightgray-red,    ACAAAA / 0.00, 0.00, 0.00, 0.40;
-   lightgray-blue,   A8ABAC / 0.00, 0.00, 0.00, 0.40;
-   lightgray-green,  A4A7A5 / 0.00, 0.00, 0.00, 0.40;
+   lightgray-yellow, ABAAA6 / 0.00, 0.00, 0.00, 0.40 / 0.60 ;
+   lightgray-red,    ACAAAA / 0.00, 0.00, 0.00, 0.40 / 0.60 ;
+   lightgray-blue,   A8ABAC / 0.00, 0.00, 0.00, 0.40 / 0.60 ;
+   lightgray-green,  A4A7A5 / 0.00, 0.00, 0.00, 0.40 / 0.60 ;
    
-   ultralightgray-yellow, DFDEDD / 0.00, 0.00, 0.00, 0.15;
-   ultralightgray-red,    DEDEDE / 0.00, 0.00, 0.00, 0.15;
-   ultralightgray-blue,   DADBDB / 0.00, 0.00, 0.00, 0.15;
-   ultralightgray-green,  E0E1E0 / 0.00, 0.00, 0.00, 0.15;
+   ultralightgray-yellow, DFDEDD / 0.00, 0.00, 0.00, 0.15 / 0.85 ;
+   ultralightgray-red,    DEDEDE / 0.00, 0.00, 0.00, 0.15 / 0.85 ;
+   ultralightgray-blue,   DADBDB / 0.00, 0.00, 0.00, 0.15 / 0.85 ;
+   ultralightgray-green,  E0E1E0 / 0.00, 0.00, 0.00, 0.15 / 0.85 ;
    
-   white, FFFFFF / 0.00, 0.00, 0.00, 0.00
+   white, FFFFFF / 0.00, 0.00, 0.00, 0.00 / 1.00
 }
 
 \bool_if:nT {
