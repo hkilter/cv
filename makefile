@@ -9,6 +9,8 @@ INPUT = cv_tobiw.tex
 README = README.md
 ## Style fiels (packages)
 PACKAGES = citobiw.sty cvtobiw.sty
+## Makefile
+MAKEFILE = makefile
 ## Image directory
 IMAGESDIR = img/
 ## Sources directory
@@ -24,18 +26,18 @@ ZIP = cv_tobiw.zip
 
 
 # make ZIP
-${ZIP}: $(PDF) ${README.md}
+${ZIP}: $(PDF) ${README.md} ${MAKEFILE}
 	# prepare directories
 	mkdir -p ${OUTPUTDIR}
 	mkdir -p ${OUTPUTDIR}${SOURCESDIR}
 	# add PDFs
 	for i in $(PDF); do cp $$i ${OUTPUTDIR}$$i; done
-	# add readme
-	cp ${README} ${OUTPUTDIR}${README}
 	# add sources
 	cp ${INPUT} ${OUTPUTDIR}${SOURCESDIR}${INPUT}
 	cp -a ${IMAGESDIR} ${OUTPUTDIR}${SOURCESDIR}${IMAGESDIR}
 	for i in $(PACKAGES); do cp $$i ${OUTPUTDIR}${SOURCESDIR}$$i; done
+	cp ${README} ${OUTPUTDIR}${SOURCESDIR}${README}
+	cp ${MAKEFILE} ${OUTPUTDIR}${SOURCESDIR}${MAKEFILE}
 	# zip it
 	zip -r ${ZIP} ${OUTPUTDIR}
 	# clean up
