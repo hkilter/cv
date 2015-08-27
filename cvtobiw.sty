@@ -22,6 +22,10 @@
    Allowed~values:~#3.
 }
 
+\msg_new:nnn { cvtobiw } { unknown-language } {
+   The~language~'#1'~can't~be~used!
+}
+
 \msg_new:nnn { cvtobiw } { var-exists } {
    The~variable~'#1'~is~already~defined!
 }
@@ -153,7 +157,11 @@
 \tl_new:N \l_cvtobiw_current_lanugage_tl
 
 \NewDocumentEnvironment { languagecontent } { m } {
-   \tl_set:Nn \l_cvtobiw_current_lanugage_tl { #1 }
+   \seq_if_in:NnTF \g_cvtobiw_languages_seq { #1 } {
+      \tl_set:Nn \l_cvtobiw_current_lanugage_tl { #1 }
+   } {
+      \msg_error:nnn { cvtobiw } { unknown-language } { #1 }
+   }
 } {}
 
 \newvars { main, image, logo, contact, skills, code }
