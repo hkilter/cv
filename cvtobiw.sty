@@ -197,7 +197,7 @@
 % \setdim{<dim-name>}{<value>}
 % \usedim{<dim-name>}
 % \showdim{<dim-name>} (show in mm rounded to one place)
-% \dim_to_decimal_in_mm_rounded:n {<dim-expression>}
+% \cvtobiw_dim_to_decimal_in_mm_rounded:n {<dim-expression>}
 
 \NewDocumentCommand { \setnewdim } { m m } {
    \dim_if_exist:cTF { l_cv_dim_#1_dim } {
@@ -224,7 +224,7 @@
    }
 }
 
-\cs_new:Npn \dim_to_decimal_in_mm_rounded:n #1 {
+\cs_new:Npn \cvtobiw_dim_to_decimal_in_mm_rounded:n #1 {
    \SI [ round-mode = places, round-precision = 1 ]
       { \dim_to_decimal_in_unit:nn { #1 } { 1mm } }
       { \milli \meter }
@@ -232,7 +232,7 @@
 
 \NewDocumentCommand { \showdim } { m } {
    \dim_if_exist:cTF { l_cv_dim_#1_dim } {
-      \dim_to_decimal_in_mm_rounded:n { \dim_use:c { l_cv_dim_#1_dim } }
+      \cvtobiw_dim_to_decimal_in_mm_rounded:n { \dim_use:c { l_cv_dim_#1_dim } }
    } {
       \msg_error:nnx { cvtobiw } { dim-undef } { #1 }
    }
@@ -746,7 +746,7 @@
                node [pos=0.75, below] {\showdim{margin-right}};
             \node at (left-col-BL) [below~right, align=left] {
                number~of~projects:~\seq_count:N \l_cvtobiw_projects_seq \\
-               cell-height:~\dim_to_decimal_in_mm_rounded:n { \dim_use:N \l_tmpa_dim }
+               cell-height:~\cvtobiw_dim_to_decimal_in_mm_rounded:n { \dim_use:N \l_tmpa_dim }
             };
          \end{scope}
       }
