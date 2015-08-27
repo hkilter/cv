@@ -746,6 +746,7 @@
                node [pos=0.75, below] {\showdim{margin-right}};
             \node at (left-col-BL) [below~right, align=left] {
                number~of~projects:~\seq_count:N \l_cvtobiw_projects_seq \\
+               number~of~rows:~\int_use:N \l_tmpa_int \\
                cell-height:~\cvtobiw_dim_to_decimal_in_mm_rounded:n { \dim_use:N \l_tmpa_dim }
             };
          \end{scope}
