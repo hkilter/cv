@@ -191,39 +191,53 @@
 \newproject{three}
 \newproject{four}
 
+\newproject{de}
+\newproject{en}
+\newproject{all1}
+\newproject{all2}
+
+\setprojectvar{all1}{title}{Allgemeines Projekt 1}
+\setprojectvar{all1}{content}{Beschreibung für Allgemeines Projekt 1}
+\setprojectvar{all2}{title}{Allgemeines Projekt 2}
+\setprojectvar{all2}{content}{Beschreibung für Allgemeines Projekt 2}
+
 \begin{languagecontent}{german}
+
+   \setprojectvar{de}{title}{Deutsches Projekt}
+   \setprojectvar{de}{content}{Beschreibung für Deutsches Projekt}
 
    \setprojectvar{one}{title}{Projekt Eins}
    \setprojectvar{one}{content}{Inhalt 1}
    
    \setprojectvar{two}{title}{Projekt Zwei}
    \setprojectvar{two}{content}{Inhalt 2}
-   
-   \setprojectvar{three}{title}{Projekt Drei}
-   \setprojectvar{three}{content}{Inhalt 3}
-   
-   \setprojectvar{four}{title}{Projekt Vier}
-   \setprojectvar{four}{content}{Inhalt 4}
+%   
+%   \setprojectvar{three}{title}{Projekt Drei}
+%   \setprojectvar{three}{content}{Inhalt 3}
+%   
+%   \setprojectvar{four}{title}{Projekt Vier}
+%   \setprojectvar{four}{content}{Inhalt 4}
 
 \end{languagecontent}
 \begin{languagecontent}{english}
 
-   \setprojectvar{one}{title}{Project One}
-   \setprojectvar{one}{content}{Content 1}
+   \setprojectvar{en}{title}{Englisches Projekt}
+   \setprojectvar{en}{content}{Beschreibung für Englisches Projekt}
+
+%   \setprojectvar{one}{title}{Project One}
+%   \setprojectvar{one}{content}{Content 1}
    
 %   \setprojectvar{two}{title}{Project Two}
 %   \setprojectvar{two}{content}{Content 2}
-   
+%   
    \setprojectvar{three}{title}{Project Three}
    \setprojectvar{three}{content}{Content 3}
-   
-   \setprojectvar{four}{title}{Project Four}
-   \setprojectvar{four}{content}{Content 4}
+%   
+%   \setprojectvar{four}{title}{Project Four}
+%   \setprojectvar{four}{content}{Content 4}
 
 \end{languagecontent}
 
-%\setvar{project-list}
-
-\MakePortfolio%[one,four,nine,six,x]
+\MakePortfolio[one,en,three]
 
 \end{document}
