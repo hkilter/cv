@@ -3,7 +3,7 @@
 
 % This commad is defined in the makefile to generate the different
 % language versions. If one compiles it directly this fallback is active.
-\providecommand{\SelectedLanguage}{german}
+\providecommand{\SelectedLanguage}{english}
 
 % This commad is defined in the makefile to select a random color scheme.
 % If one compiles it directly this fallback is active.
@@ -22,7 +22,7 @@
 
 \usepackage[
    language = \SelectedLanguage,
-%   show-frame,
+   show-frame,
    year-format = YY,
 ]{cvtobiw}
 
@@ -184,6 +184,46 @@
 \setvar{timeline-start}{2007}
 \setvar{timeline-end}{2015}
 
-\MakeCV
+%\MakeCV
+
+\newproject{one}
+\newproject{two}
+\newproject{three}
+\newproject{four}
+
+\begin{languagecontent}{german}
+
+   \setprojectvar{one}{title}{Projekt Eins}
+   \setprojectvar{one}{content}{Inhalt 1}
+   
+   \setprojectvar{two}{title}{Projekt Zwei}
+   \setprojectvar{two}{content}{Inhalt 2}
+   
+   \setprojectvar{three}{title}{Projekt Drei}
+   \setprojectvar{three}{content}{Inhalt 3}
+   
+   \setprojectvar{four}{title}{Projekt Vier}
+   \setprojectvar{four}{content}{Inhalt 4}
+
+\end{languagecontent}
+\begin{languagecontent}{english}
+
+   \setprojectvar{one}{title}{Project One}
+   \setprojectvar{one}{content}{Content 1}
+   
+%   \setprojectvar{two}{title}{Project Two}
+%   \setprojectvar{two}{content}{Content 2}
+   
+   \setprojectvar{three}{title}{Project Three}
+   \setprojectvar{three}{content}{Content 3}
+   
+   \setprojectvar{four}{title}{Project Four}
+   \setprojectvar{four}{content}{Content 4}
+
+\end{languagecontent}
+
+%\setvar{project-list}
+
+\MakePortfolio%[one,four,nine,six,x]
 
 \end{document}
