@@ -34,6 +34,10 @@
    The~language~'#1'~can't~be~used!
 }
 
+\msg_new:nnn { cvtobiw } { var-empty } {
+   The~variable~'#1'~is~empty~in~the~current~language!
+}
+
 \msg_new:nnn { cvtobiw } { var-exists } {
    The~variable~'#1'~is~already~defined!
 }
@@ -166,6 +170,9 @@
 \NewDocumentCommand { \usevar } { m } {
    \tl_if_exist:cTF { cv_var_#1_ \tl_use:N \g_cvtobiw_lanugage_tl _tl } {
       \tl_use:c { cv_var_#1_ \tl_use:N \g_cvtobiw_lanugage_tl _tl }
+      \citobiw_if_var_empty:nT { #1 } {
+         \msg_warning:nnn { cvtobiw } { var-empty } { #1 }
+      }
    } {
       \msg_error:nnn { cvtobiw } { var-undef } { #1 }
    }
