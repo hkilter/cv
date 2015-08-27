@@ -406,6 +406,7 @@
 % - \LaTeXe/ for LaTeX2e
 % - \LaTeXiii/ for LaTeX3
 % - \XeTeX/ for XeTeX
+% - \TikZ/ for TikZ
 
 \AtBeginDocument { \providecommand \texorpdfstring [ 2 ] { #1 } }
 
@@ -466,6 +467,15 @@
    }
 }
 \robustify { \XeTeX }
+
+\def \TikZ/ {
+   \texorpdfstring {
+      Ti\emph{k}Z
+   } {
+      TikZ
+   }
+}
+\robustify { \TikZ }
 
 
 
