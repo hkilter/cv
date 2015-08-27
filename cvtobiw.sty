@@ -17,7 +17,7 @@
    A~project~with~id~'#1'~already~exists!
 }
 
-\msg_new:nnn { cvtobiw } { project-unkown } {
+\msg_new:nnn { cvtobiw } { project-unknown } {
    A~project~with~id~'#1'~doesn't~exist!
 }
 
@@ -32,6 +32,10 @@
 
 \msg_new:nnn { cvtobiw } { unknown-language } {
    The~language~'#1'~can't~be~used!
+}
+
+\msg_new:nnn { cvtobiw } { var-empty } {
+   The~variable~'#1'~is~empty~in~the~current~language!
 }
 
 \msg_new:nnn { cvtobiw } { var-exists } {
@@ -137,7 +141,7 @@
    \clist_map_inline:nn { #2 } {
       \seq_map_inline:Nn \g_cvtobiw_languages_seq {
          \tl_if_exist:cTF { cv_var_#1##1_####1_tl } {
-            \msg_error:nnn { cvtobiw } { var-exists } { #1##1 }
+            \msg_error:nnx { cvtobiw } { var-exists } { #1##1 }
          } {
             \tl_new:c { cv_var_#1##1_####1_tl }
          }
@@ -159,15 +163,18 @@
    \tl_if_exist:cTF { cv_var_#1_#2_tl } {
       \tl_gset:cn { cv_var_#1_#2_tl } { #3 }
    } {
-      \msg_error:nnn { cvtobiw } { var-undef } { #1 }
+      \msg_error:nnx { cvtobiw } { var-undef } { #1 }
    }
 }
 
 \NewDocumentCommand { \usevar } { m } {
    \tl_if_exist:cTF { cv_var_#1_ \tl_use:N \g_cvtobiw_lanugage_tl _tl } {
       \tl_use:c { cv_var_#1_ \tl_use:N \g_cvtobiw_lanugage_tl _tl }
+      \citobiw_if_var_empty:nT { #1 } {
+         \msg_warning:nnx { cvtobiw } { var-empty } { #1 }
+      }
    } {
-      \msg_error:nnn { cvtobiw } { var-undef } { #1 }
+      \msg_error:nnx { cvtobiw } { var-undef } { #1 }
    }
 }
 
@@ -177,7 +184,7 @@
    \seq_if_in:NnTF \g_cvtobiw_languages_seq { #1 } {
       \tl_set:Nn \l_cvtobiw_current_lanugage_tl { #1 }
    } {
-      \msg_error:nnn { cvtobiw } { unknown-language } { #1 }
+      \msg_error:nnx { cvtobiw } { unknown-language } { #1 }
    }
 } {}
 
@@ -194,7 +201,7 @@
 
 \NewDocumentCommand { \setnewdim } { m m } {
    \dim_if_exist:cTF { l_cv_dim_#1_dim } {
-      \msg_error:nnn { cvtobiw } { dim-exists } { #1 }
+      \msg_error:nnx { cvtobiw } { dim-exists } { #1 }
    } {
       \dim_new:c { l_cv_dim_#1_dim }
       \dim_set:cn { l_cv_dim_#1_dim } { #2 }
@@ -205,7 +212,7 @@
    \dim_if_exist:cTF { l_cv_dim_#1_dim } {
       \dim_set:cn { l_cv_dim_#1_dim } { #2 }
    } {
-      \msg_error:nnn { cvtobiw } { dim-undef } { #1 }
+      \msg_error:nnx { cvtobiw } { dim-undef } { #1 }
    }
 }
 
@@ -629,17 +636,40 @@
 
 \seq_new:N \l_cvtobiw_projects_seq
 
+\seq_map_inline:Nn \g_cvtobiw_languages_seq {
+   \seq_new:c { l_cvtobiw_projects_#1_seq }
+}
+
 \NewDocumentCommand { \newproject } { m } {
    \seq_if_in:NnTF \l_cvtobiw_projects_seq { #1 } {
-      \msg_error:nnn { cvtobiw } { project-exists } { #1 }
+      \msg_error:nnx { cvtobiw } { project-exists } { #1 }
    } {
       \seq_gput_right:Nn \l_cvtobiw_projects_seq { #1 }
       \newvars [ project-#1- ] { title, content }
    }
 }
 
+\cs_new:Npn \cvtobiw_seq_gput_right_no_duplicates:Nn #1#2 {
+   \seq_if_in:NnF #1 { #2 } {
+      \seq_gput_right:Nn #1 { #2 }
+   }
+}
+\cs_generate_variant:Nn \cvtobiw_seq_gput_right_no_duplicates:Nn { c }
+
 \NewDocumentCommand { \setprojectvar } { m m +m } {
-   \setvar { project-#1-#2 } { #3 }
+   \seq_if_in:NnTF \l_cvtobiw_projects_seq { #1 } {
+      \tl_if_empty:NTF \l_cvtobiw_current_lanugage_tl {
+         \seq_map_inline:Nn \g_cvtobiw_languages_seq {
+            \cvtobiw_seq_gput_right_no_duplicates:cn { l_cvtobiw_projects_##1_seq } { #1 }
+         }
+      } {
+         \cvtobiw_seq_gput_right_no_duplicates:cn
+            { l_cvtobiw_projects_ \tl_use:N \l_cvtobiw_current_lanugage_tl _seq } { #1 }
+      }
+      \setvar { project-#1-#2 } { #3 }
+   } {
+      \msg_error:nnx { cvtobiw } { project-unknown } { #1 }
+   }
 }
 
 \newkomafont { project-headline } { \bfseries }
@@ -652,13 +682,16 @@
 % separated list of porject <id>s; otherwise all projects are shown.
 
 \NewDocumentCommand { \MakePortfolio } { o } {{
-   \IfValueT { #1 } {
+   \IfValueTF { #1 } {
       \seq_set_split:Nnn \l_cvtobiw_projects_seq { , } { #1 }
       \seq_map_inline:Nn \l_cvtobiw_projects_seq {
          \citobiw_if_var_exist:nF { project-##1-title } {
-            \msg_error:nnn { cvtobiw } { project-unkown } { ##1 }
+            \msg_error:nnx { cvtobiw } { project-unknown } { ##1 }
          }
       }
+   } {
+      \seq_set_eq:Nc \l_cvtobiw_projects_seq
+         { l_cvtobiw_projects_ \tl_use:N \g_cvtobiw_lanugage_tl _seq }
    }
    \clearpage
    \pagestyle { empty }
@@ -691,9 +724,7 @@
       }
       \foreach \y in { 1, ..., \int_use:N \l_tmpa_int } {
          \coordinate (P\y-L) at ($(left-col-TL)+(0,{-(\y-1) * \dim_use:N \l_tmpa_dim})$);
-%         \node at (P\y-L) {P\y-L};
          \coordinate (P\y-R) at ($(right-col-TL)+(0,{-(\y-1) * \dim_use:N \l_tmpa_dim})$);
-%         \node at (P\y-R) {P\y-R};
       }
       % frame / help lines
       \bool_if:NT \g_cv_show_frame_bool {
