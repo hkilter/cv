@@ -355,6 +355,7 @@
 % TIKZ SETTINGS
 
 \tikzset{
+% gereral
    every~node/.style = {
       inner~sep = 0pt,
       outer~sep = 0pt,
@@ -362,6 +363,17 @@
    activate~parskip/.style = {
       execute~at~begin~node = { \parskip = 0.5\baselineskip },
    },
+   guide/.style = {
+      magenta,
+      ultra~thin,
+      every~node/.style = {
+         font = \tiny,
+      },
+   },
+   grid/.style = {
+      loosely~dashed,
+   },
+% for CV
    maintext/.style = {
       anchor = north~west,
       text~width = \usedim{left-col-width},
@@ -466,10 +478,7 @@
       \coordinate (right-col-BR) at ($(right-col-BL)+(\usedim{right-col-width},0)$);
       % frame / help lines
       \bool_if:NT \g_cv_show_frame_bool {
-         \begin{scope}[
-            thin, magenta,
-            every~node/.style = {font=\tiny},
-         ]
+         \begin{scope}[guide]
             \draw (TL) rectangle (BR);
             \draw (left-col-TR) -- (left-col-BR);
             \draw (right-col-TL) -- (right-col-BL);
@@ -479,7 +488,7 @@
             \node at ($(right-col-TL)!0.5!(right-col-TR)$) [above] { \showdim{right-col-width} };
             \foreach \x in { 1, ..., \usevar{timeline-raster-div} }
             { 
-               \draw [loosely~dashed]
+               \draw [grid]
                   ($
                      (left-col-TL)
                      +(\usedim{timeline-raster-start},0)
