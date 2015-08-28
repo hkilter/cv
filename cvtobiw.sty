@@ -631,8 +631,9 @@
 % - \l_cvtobiw_projects_seq
 %   list with all project ids
 % available vars (for \setprojectvar):
-% - title
 % - content
+% - image
+% - title
 
 \seq_new:N \l_cvtobiw_projects_seq
 
@@ -645,7 +646,7 @@
       \msg_error:nnx { cvtobiw } { project-exists } { #1 }
    } {
       \seq_gput_right:Nn \l_cvtobiw_projects_seq { #1 }
-      \newvars [ project-#1- ] { title, content }
+      \newvars [ project-#1- ] { content, image, title }
    }
 }
 
@@ -761,8 +762,13 @@
          \node [project] at (P) {
             { \usekomafont { project-headline }
                \usevar { project- \seq_item:Nn \l_cvtobiw_projects_seq { \p } -title }
+               \par
             }
-            \par
+            \citobiw_if_var_empty:nF { project- \seq_item:Nn \l_cvtobiw_projects_seq { \p } -image } {
+               \vspace { 0.3\baselineskip }
+               \usevar { project- \seq_item:Nn \l_cvtobiw_projects_seq { \p } -image }
+               \par
+            }
             \usevar { project- \seq_item:Nn \l_cvtobiw_projects_seq { \p } -content }
          };
       }
