@@ -8,7 +8,7 @@
 *.toc
 
 ## PDFs
-*.pdf
+/*.pdf
 
 
 ## ZIPs
