@@ -3,7 +3,7 @@
 
 % This commad is defined in the makefile to generate the different
 % language versions. If one compiles it directly this fallback is active.
-\providecommand{\SelectedLanguage}{english}
+\providecommand{\SelectedLanguage}{german}
 
 % This commad is defined in the makefile to select a random color scheme.
 % If one compiles it directly this fallback is active.
@@ -22,7 +22,7 @@
 
 \usepackage[
    language = \SelectedLanguage,
-   show-frame,
+%   show-frame,
    year-format = YY,
 ]{cvtobiw}
 
@@ -178,11 +178,11 @@
    }
 \end{languagecontent}
 
-\setvar{image}{%
+\setvar{image}{
    \includegraphics[width=\usedim{right-col-width}]{img/tobiw}
 }
 
-\setvar{logo}{%
+\setvar{logo}{
    \TobiWLogo[height=4ex]
 }
 
@@ -190,60 +190,103 @@
 \setvar{timeline-start}{2007}
 \setvar{timeline-end}{2015}
 
-%\MakeCV
+\MakeCV
 
-\newproject{one}
-\newproject{two}
-\newproject{three}
-\newproject{four}
-
-\newproject{de}
-\newproject{en}
-\newproject{all1}
-\newproject{all2}
-
-\setprojectvar{all1}{title}{Allgemeines Projekt 1}
-\setprojectvar{all1}{content}{Beschreibung für Allgemeines Projekt 1}
-\setprojectvar{all2}{title}{Allgemeines Projekt 2}
-\setprojectvar{all2}{content}{Beschreibung für Allgemeines Projekt 2}
+\newproject{dekonstruiert}
+\newproject{master}
+\newproject{metrix}
+\newproject{mos}
+\newproject{musicaincantans}
+\newproject{nve}
+\newproject{speight}
 
 \begin{languagecontent}{german}
-
-   \setprojectvar{de}{title}{Deutsches Projekt}
-   \setprojectvar{de}{content}{Beschreibung für Deutsches Projekt}
-
-   \setprojectvar{one}{title}{Projekt Eins}
-   \setprojectvar{one}{content}{Inhalt 1}
+   \setprojectvar{dekonstruiert}{title}{Dekonstruiert}
+   \setprojectvar{dekonstruiert}{content}{
+      \includegraphics[width=\usedim{eq-col-width}]{img/projects/dekonstruiert}
+      
+      Das Büchlein \emph{Dekonstruiert} nimmt den Leser mit auf eine „Reise ins
+      Detail“ und beleuchtet dabei die verschiedensten Aspekte der Buchproduktion vom
+      Satzspiegel, über das Druckraster bis hin zu Quanten. Das Büchlein habe ich mit
+      Illustrator und InDesign gemacht.
+      \projectlink{tobiw.de/illustration}
+   }
    
-   \setprojectvar{two}{title}{Projekt Zwei}
-   \setprojectvar{two}{content}{Inhalt 2}
-%   
-%   \setprojectvar{three}{title}{Projekt Drei}
-%   \setprojectvar{three}{content}{Inhalt 3}
-%   
-%   \setprojectvar{four}{title}{Projekt Vier}
-%   \setprojectvar{four}{content}{Inhalt 4}
-
-\end{languagecontent}
-\begin{languagecontent}{english}
-
-   \setprojectvar{en}{title}{Englisches Projekt}
-   \setprojectvar{en}{content}{Beschreibung für Englisches Projekt}
-
-%   \setprojectvar{one}{title}{Project One}
-%   \setprojectvar{one}{content}{Content 1}
+   \setprojectvar{master}{title}{Transmittierte und reflektierte Wellen}
+   \setprojectvar{master}{content}{
+      \includegraphics[width=\usedim{eq-col-width}]{img/projects/master_thesis}
+      
+      Zum Abschluss meines Lehramtsstudiums entstand meine Masterarbeit mit dem Titel
+      „Anschauliche Erklärung der trans\-mittierten und reflektierten Schallwellen am
+      Ende einer offenen Röhre“. Die Arbeit habe ich mit \XeTeX/ gesetzt und \TikZ/
+      \linebreak illustriert.
+      \projectlink{tobiw.de/galerie/schwingungen-und-wellen}
+   }
    
-%   \setprojectvar{two}{title}{Project Two}
-%   \setprojectvar{two}{content}{Content 2}
-%   
-   \setprojectvar{three}{title}{Project Three}
-   \setprojectvar{three}{content}{Content 3}
-%   
-%   \setprojectvar{four}{title}{Project Four}
-%   \setprojectvar{four}{content}{Content 4}
-
+   \setprojectvar{metrix}{title}{\LaTeX/-Paket \emph{metrix}}
+   \setprojectvar{metrix}{content}{
+      \includegraphics[width=\usedim{eq-col-width}]{img/projects/metrix}
+      
+      Das Paket \emph{metrix} dient dazu die Prosodie eines (lateinischen) Verses
+      anzugeben, wobei die Ausrichtung der Symbole über den Silben halbautomatisch
+      erfolgt. Das Paket habe ich weitestgehend mit den neuen \LaTeXiii/-Funktionen
+      implementiert.
+      \projectlink{tobiw.de/tex-beratung-und-programmierung\#metrix}
+   }
+   
+   \setprojectvar{mos}{title}{Musikedition Osnabrücker Schloss}
+   \setprojectvar{mos}{content}{
+      \includegraphics[width=\usedim{eq-col-width}]{img/projects/mos}
+      
+      Für die 2013 gegründete Reihe für kritische Ausgaben von Noten
+      \emph{Musikedition Osnabrücker Schloss} habe ich ein Layout ausgearbeitet und
+      den Satz der bisher erschienenen Ausgaben übernommen. Bei der ersten Ausgabe
+      war ich außerdem an der\linebreak Edition selbst beteiligt.
+      \projectlink{tobiw.de/notensatz}
+   }
+   
+   \setprojectvar{musicaincantans}{title}{Musica Incantans}
+   \setprojectvar{musicaincantans}{content}{
+      \includegraphics[width=\usedim{eq-col-width}]{img/projects/musica_incantans}
+      
+      \emph{Musica Incantans} ist die kritische Ausgabe eines neulateinischen
+      Gedichtes von Robert South über die Macht der Musik. Das Gedicht selbst ist auf
+      gegenüberliegenden Seiten im Original und deutscher Übersetzung gedruckt.
+      Gesetzt habe ich es mit \XeTeX/.
+      \projectlink{tobiw.de/buch-und-textgestaltung}
+   }
+   
+   \setprojectvar{nve}{title}{Niedersächsisches Vokalensemble e.\,V.}
+   \setprojectvar{nve}{content}{
+      \includegraphics[width=\usedim{eq-col-width}]{img/projects/nve}
+      
+      Das Niedersächsische Vokalensemble ist ein 2014 ins Leben gerufener
+      projektweise arbeitender Kammerchor, der anspruchsvolle Chormusik von
+      Renaissance bis Moderne erarbeitet und aufführt. Ich habe für den Chor ein
+      Corporate Design entwickelt und umgesetzt.
+      \projectlink{tobiw.de/corporate-design}
+   }
+   
+   \setprojectvar{speight}{title}{Sam\kern-0.2pt’\kern-0.7pts Mass}
+   \setprojectvar{speight}{content}{
+      \includegraphics[width=\usedim{eq-col-width}]{img/projects/speight}
+      
+      Für den Kammerchor der Uni Osnabrück habe ich aus den nur in Handschrift
+      erhältlichen Noten von \emph{Sam’s Mass} eine leichter lesbare gedruckte
+      Version angefertigt, wobei ich zusätzliche Symbolen entwickelt habe, um den
+      Sängern die Orientierung zu erleichtern.
+      \projectlink{tobiw.de/galerie/sams-mass}
+   }
 \end{languagecontent}
 
-\MakePortfolio[one,en,three]
+\MakePortfolio[
+   dekonstruiert,
+   master,
+%   metrix,
+   mos,
+   musicaincantans,
+   nve,
+   speight
+]
 
 \end{document}
