@@ -53,9 +53,12 @@
 }
 
 \newcommand{\projectlink}[1]{{% see german LaTeX Companion (LaTeX Begleiter; 2. ed.), p. 883
-   \quad\hspace*{\fill}\nolinebreak[3]%
+   \hspace*{\fill}%
+   \nolinebreak[3]%
+   \quad\hspace*{\fill}%
    \color{lightgray}%
-   ↗~\href{http://#1}{#1}%
+   \finalhyphendemerits=0%
+   \mbox{↗~\href{http://#1}{#1}}%
 }}
 
 \begin{document}
