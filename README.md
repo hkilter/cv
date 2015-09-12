@@ -13,6 +13,7 @@ The packages are documented directly in the *.sty files. If you have any questio
 ## Files and Folders
 
 - `citobiw.sty` – this package contains all necessary settings for my own corporate design
+- `cv_example_image.jpg` – the example image for the `README.md`
 - `cv_tobiw.tex` – this is the **main project file** to generate the document
 - `cvtobiw.sty` – this is the package I made to build up my CV in nice graphical way with TikZ
 - `img/` – in this directory are all necessary images
