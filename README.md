@@ -1,6 +1,6 @@
 # My Curriculum Vitae and Portfolio  
 
-
+![example image of my CV](cv_example_image.jpg)
 
 This is my CV together with a rather small portfolio of my work. It was made with TeX using TikZ and the new LaTeX3 syntax.
 
