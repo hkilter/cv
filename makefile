@@ -2,8 +2,7 @@
 
 # Variables
 ## List of available languages
-# LANGUAGES = german english
-LANGUAGES = german
+LANGUAGES = german english
 ## Input file name
 INPUT = cv_tobiw.tex
 ## Readmefile
